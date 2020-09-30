@@ -1,0 +1,16 @@
+version: "3.2"
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.9.2
+    container_name: logana_kibana
+    environment:
+      - "ELASTICSEARCH_HOSTS=http://logana01:9200"
+    ports:
+      - target: 5601
+        published: 5601
+        protocol: tcp
+        mode: host
+    networks:
+      - esnet
+    depends_on:
+      - logana01

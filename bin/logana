@@ -1,0 +1,84 @@
+#!/bin/bash
+
+
+cd `dirname $0`
+cd ..
+base_dir=`pwd`
+
+program_name=$(basename $0)
+logana_version="1.0"
+server_file=$base_dir/.logana_server
+
+usage() {
+    echo "Usage: $program_name [COMMAND] "
+    echo
+    echo "Options:"
+    echo "  server"
+    echo "  help"
+    echo
+    exit 1
+}
+
+start_server() {
+    for OPT in "$@" ; do
+        case $OPT in
+            -k | --kibana)
+                with_kibana="-f $base_dir/server/docker-compose.kibana.yml"
+                shift 1
+                ;;
+            -c | --cluster)
+                with_cluster="-f $base_dir/server/docker-compose.cluster.yml"
+                shift 1
+                ;;
+            *)
+                shift 1
+                ;;
+        esac
+    done
+
+    if [[ -f $server_file ]] ; then
+        echo "$server_file exists."
+        exit 1
+    fi
+    docker-compose -f $base_dir/server/docker-compose.yml $with_cluster $with_kibana up -d
+    echo "$with_cluster $with_kibana" > $server_file
+}
+
+stop_server() {
+    if [[ -f $server_file ]] ; then
+        logana_options=`cat $server_file`
+    fi
+    docker-compose -f $base_dir/server/docker-compose.yml $logana_options down
+    rm -f $server_file
+}
+
+server_command() {
+    sub_cmd=$1
+
+    case ${sub_cmd} in
+        start)
+            shift
+            start_server $@
+            ;;
+        stop)
+            shift
+            stop_server $@
+            ;;
+        *)
+            echo "Unknown sub-command for server command."
+            exit 1
+            ;;
+    esac
+}
+
+cmd=$1
+
+case ${cmd} in
+    server)
+        shift
+        server_command $@
+        ;;
+    *)
+        usage
+        ;;
+esac
