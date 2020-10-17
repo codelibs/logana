@@ -1,2 +1,3 @@
 /server/elasticsearch/data*
 /server/elasticsearch/plugins/
+.logana_server

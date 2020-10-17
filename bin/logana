@@ -8,6 +8,8 @@ base_dir=`pwd`
 program_name=$(basename $0)
 logana_version="1.0"
 server_file=$base_dir/.logana_server
+server_url=localhost:9200
+log_index=logana_logs
 
 usage() {
     echo "Usage: $program_name [COMMAND] "
@@ -42,6 +44,18 @@ start_server() {
     fi
     docker-compose -f $base_dir/server/docker-compose.yml $with_cluster $with_kibana up -d
     echo "$with_cluster $with_kibana" > $server_file
+
+    counter=1
+    ret=1
+    while [ $ret != 200 -a $counter -le 60 ] ; do
+        echo -n "."
+        ret=`curl -w '%{http_code}\n' -s -o /dev/null $server_url`
+        counter=`expr $counter + 1`
+        sleep 1
+    done
+    echo
+
+    setup_index_template
 }
 
 stop_server() {
@@ -50,6 +64,16 @@ stop_server() {
     fi
     docker-compose -f $base_dir/server/docker-compose.yml $logana_options down
     rm -f $server_file
+}
+
+setup_index_template() {
+    ret=`curl -s -H "Content-Type: application/json" $server_url/_index_template/$log_index | jq '.index_templates'`
+    if [[ "$ret" = 'null' ]] ; then
+        ret=`curl -s -XPUT -H "Content-Type: application/json" $server_url/_index_template/$log_index -d @$base_dir/conf/log_template.json | jq '.acknowledged'`
+        if [[ "$ret" = 'true' ]] ; then
+            echo "Registered a log index template."
+        fi
+    fi
 }
 
 server_command() {

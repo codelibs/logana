@@ -1,0 +1,318 @@
+{
+  "index_patterns": [
+    "logana_log*"
+  ],
+  "priority": 1,
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "auto_expand_replicas": "0-1",
+      "index.mapping.total_fields.limit": 10000
+    },
+    "aliases": {
+      "logana_log": {}
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "request_id": {
+            "path_match": "request.id.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "request_conditions_keyword": {
+            "path_match": "request.conditions.keyword.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "request_conditions_text": {
+            "path_match": "request.conditions.text.*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "request_conditions_date": {
+            "path_match": "request.conditions.date.*",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "request_conditions_boolean": {
+            "path_match": "request.conditions.boolean.*",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "request_conditions_integer": {
+            "path_match": "request.conditions.integer.*",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "request_conditions_long": {
+            "path_match": "request.conditions.long.*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "request_conditions_float": {
+            "path_match": "request.conditions.float.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "request_conditions_double": {
+            "path_match": "request.conditions.double.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "request_attributes_keyword": {
+            "path_match": "request.attributes.keyword.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "request_attributes_text": {
+            "path_match": "request.attributes.text.*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "request_attributes_date": {
+            "path_match": "request.attributes.date.*",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "request_attributes_boolean": {
+            "path_match": "request.attributes.boolean.*",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "request_attributes_integer": {
+            "path_match": "request.attributes.integer.*",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "request_attributes_long": {
+            "path_match": "request.attributes.long.*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "request_attributes_float": {
+            "path_match": "request.attributes.float.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "request_attributes_double": {
+            "path_match": "request.attributes.double.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "response_total": {
+            "path_match": "response.total_*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "response_total_hits": {
+            "path_match": "response.total_hits",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "response_results_keyword": {
+            "path_match": "response.results.doc_*.keyword.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "response_results_text": {
+            "path_match": "response.results.doc_*.text.*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "response_results_date": {
+            "path_match": "response.results.doc_*.date.*",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "response_results_boolean": {
+            "path_match": "response.results.doc_*.boolean.*",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "response_results_integer": {
+            "path_match": "response.results.doc_*.integer.*",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "response_results_long": {
+            "path_match": "response.results.doc_*.long.*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "response_results_float": {
+            "path_match": "response.results.doc_*.float.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "response_results_double": {
+            "path_match": "response.results.doc_*.double.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "response_results_keyword": {
+            "path_match": "response.results.doc_*.id",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "response_attributes_keyword": {
+            "path_match": "response.attributes.keyword.*",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        },
+        {
+          "response_attributes_text": {
+            "path_match": "response.attributes.text.*",
+            "mapping": {
+              "type": "text"
+            }
+          }
+        },
+        {
+          "response_attributes_date": {
+            "path_match": "response.attributes.date.*",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        },
+        {
+          "response_attributes_boolean": {
+            "path_match": "response.attributes.boolean.*",
+            "mapping": {
+              "type": "boolean"
+            }
+          }
+        },
+        {
+          "response_attributes_integer": {
+            "path_match": "response.attributes.integer.*",
+            "mapping": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "response_attributes_long": {
+            "path_match": "response.attributes.long.*",
+            "mapping": {
+              "type": "long"
+            }
+          }
+        },
+        {
+          "response_attributes_float": {
+            "path_match": "response.attributes.float.*",
+            "mapping": {
+              "type": "float"
+            }
+          }
+        },
+        {
+          "response_attributes_double": {
+            "path_match": "response.attributes.double.*",
+            "mapping": {
+              "type": "double"
+            }
+          }
+        },
+        {
+          "timestamp": {
+            "path_match": "@timestamp",
+            "mapping": {
+              "type": "date"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
