@@ -3,7 +3,7 @@ Logana: Log Analysis System
 
 ## Overview
 
-Logana is a log analysis system.
+Logana is Search/Recommend Log Analysis system.
 
 ### Kernel settings for elasticsearch
 
