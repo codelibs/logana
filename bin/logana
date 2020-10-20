@@ -95,12 +95,84 @@ server_command() {
     esac
 }
 
+print_cat() {
+    curl -s -H "Content-Type: application/json" $server_url/_cat/$1
+}
+
+show_command() {
+    sub_cmd=$1
+
+    case ${sub_cmd} in
+        allocation)
+            print_cat allocation
+            ;;
+        shards)
+            print_cat shards
+            ;;
+        master)
+            print_cat master
+            ;;
+        nodes)
+            print_cat nodes
+            ;;
+        tasks)
+            print_cat tasks
+            ;;
+        indices)
+            print_cat indices
+            ;;
+        segments)
+            print_cat segments
+            ;;
+        count)
+            print_cat count
+            ;;
+        recovery)
+            print_cat recovery
+            ;;
+        health)
+            print_cat health
+            ;;
+        pending_tasks)
+            print_cat pending_tasks
+            ;;
+        aliases)
+            print_cat aliases
+            ;;
+        thread_pool)
+            print_cat thread_pool
+            ;;
+        plugins)
+            print_cat plugins
+            ;;
+        fielddata)
+            print_cat fielddata
+            ;;
+        nodeattrs)
+            print_cat nodeattrs
+            ;;
+        repositories)
+            print_cat repositories
+            ;;
+        templates)
+            print_cat templates
+            ;;
+        *)
+            print_cat indices
+            ;;
+    esac
+}
+
 cmd=$1
 
 case ${cmd} in
     server)
         shift
         server_command $@
+        ;;
+    show)
+        shift
+        show_command $@
         ;;
     *)
         usage
