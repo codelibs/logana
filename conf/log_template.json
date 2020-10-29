@@ -88,6 +88,22 @@
           }
         },
         {
+          "request_conditions_ip": {
+            "path_match": "request.conditions.ip.*",
+            "mapping": {
+              "type": "ip"
+            }
+          }
+        },
+        {
+          "request_conditions_geo": {
+            "path_match": "request.conditions.geo_point.*",
+            "mapping": {
+              "type": "geo_point"
+            }
+          }
+        },
+        {
           "request_attributes_keyword": {
             "path_match": "request.attributes.keyword.*",
             "mapping": {
@@ -148,6 +164,14 @@
             "path_match": "request.attributes.double.*",
             "mapping": {
               "type": "double"
+            }
+          }
+        },
+        {
+          "request_attributes_ip": {
+            "path_match": "request.attributes.ip.*",
+            "mapping": {
+              "type": "ip"
             }
           }
         },
@@ -232,7 +256,23 @@
           }
         },
         {
-          "response_results_keyword": {
+          "response_results_ip": {
+            "path_match": "response.results.doc_*.ip.*",
+            "mapping": {
+              "type": "ip"
+            }
+          }
+        },
+        {
+          "response_results_geo": {
+            "path_match": "response.results.doc_*.geo_point.*",
+            "mapping": {
+              "type": "geo_point"
+            }
+          }
+        },
+        {
+          "response_results_keyword_id": {
             "path_match": "response.results.doc_*.id",
             "mapping": {
               "type": "keyword"
@@ -300,6 +340,14 @@
             "path_match": "response.attributes.double.*",
             "mapping": {
               "type": "double"
+            }
+          }
+        },
+        {
+          "response_attributes_ip": {
+            "path_match": "response.attributes.ip.*",
+            "mapping": {
+              "type": "ip"
             }
           }
         },

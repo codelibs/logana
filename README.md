@@ -19,6 +19,12 @@ See [Install Elasticsearch with Docker](https://www.elastic.co/guide/en/elastics
 $ ./bin/logana server start
 ```
 
+If you want to start Logana with Kibana, add `-k` option:
+
+```
+$ ./bin/logana server start -k
+```
+
 ### Stop Logana Server
 
 ```
