@@ -66,6 +66,16 @@ stop_server() {
     rm -f $server_file
 }
 
+clean_server() {
+    if [[ -f $server_file ]] ; then
+        echo "$server_file exists."
+        exit 1
+    fi
+    for v in `docker-compose -f $base_dir/server/docker-compose.yml $logana_options config --volumes` ; do
+        docker volume rm server_$v
+    done
+}
+
 setup_index_template() {
     ret=`curl -s -H "Content-Type: application/json" $server_url/_index_template/$log_index | jq '.index_templates'`
     if [[ "$ret" = 'null' ]] ; then
@@ -87,6 +97,10 @@ server_command() {
         stop)
             shift
             stop_server $@
+            ;;
+        clean)
+            shift
+            clean_server $@
             ;;
         *)
             echo "Unknown sub-command for server command."
