@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   kibana:
-    image: docker.elastic.co/kibana/kibana:7.9.2
+    image: docker.elastic.co/kibana/kibana:7.9.3
     container_name: logana_kibana
     environment:
       - "ELASTICSEARCH_HOSTS=http://logana01:9200"
