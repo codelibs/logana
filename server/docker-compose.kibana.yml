@@ -4,7 +4,7 @@ services:
     image: docker.elastic.co/kibana/kibana:7.9.3
     container_name: logana_kibana
     environment:
-      - "ELASTICSEARCH_HOSTS=http://logana01:9200"
+      - "ELASTICSEARCH_HOSTS=http://logana01:9220"
     ports:
       - target: 5601
         published: 5601

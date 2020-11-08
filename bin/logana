@@ -5,11 +5,13 @@ cd `dirname $0`
 cd ..
 base_dir=`pwd`
 
+. $base_dir/conf/setting.sh
+
 program_name=$(basename $0)
 logana_version="1.0"
 server_file=$base_dir/.logana_server
-server_url=localhost:9200
-log_index=logana_logs
+server_url=$SERVER_URL
+log_index=$LOG_INDEX
 
 usage() {
     echo "Usage: $program_name [COMMAND] "

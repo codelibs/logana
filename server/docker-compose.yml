@@ -9,6 +9,7 @@ services:
       - cluster.initial_master_nodes=logana01
       - cluster.name=logana-es
       - bootstrap.memory_lock=true
+      - http.port=9220-9300
       - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
     ulimits:
       memlock:
@@ -29,8 +30,8 @@ services:
         volume:
           nocopy: true
     ports:
-      - target: 9200
-        published: 9200
+      - target: 9220
+        published: 9220
         protocol: tcp
         mode: host
     networks:

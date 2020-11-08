@@ -97,7 +97,7 @@ It's as below:
 An example request is like this:
 
 ```
-curl -H "Content-Type: application/json" -XPOST localhost:9200/logana_log.2020-10/_doc/12345 -d '
+curl -H "Content-Type: application/json" -XPOST localhost:9220/logana_log.2020-10/_doc/12345 -d '
 {
   "request": {
     "id": {
