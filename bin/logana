@@ -34,6 +34,10 @@ start_server() {
                 with_cluster="-f $base_dir/server/docker-compose.cluster.yml"
                 shift 1
                 ;;
+            -j | --jupyter)
+                with_jupyter="-f $base_dir/server/docker-compose.jupyter.yml"
+                shift 1
+                ;;
             *)
                 shift 1
                 ;;
@@ -44,8 +48,8 @@ start_server() {
         echo "$server_file exists."
         exit 1
     fi
-    docker-compose -f $base_dir/server/docker-compose.yml $with_cluster $with_kibana up -d
-    echo "$with_cluster $with_kibana" > $server_file
+    docker-compose -f $base_dir/server/docker-compose.yml $with_cluster $with_kibana $with_jupyter up -d
+    echo "$with_cluster $with_kibana $with_jupyter" > $server_file
 
     counter=1
     ret=1

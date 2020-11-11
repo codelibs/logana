@@ -1,0 +1,21 @@
+version: "3.2"
+services:
+  kibana:
+    image: jupyter/datascience-notebook:python-3.8.6
+    container_name: logana_jupyter
+    environment:
+      - JUPYTER_ENABLE_LAB=yes
+    ports:
+      - target: 8888
+        published: 8888
+        protocol: tcp
+        mode: host
+    networks:
+      - esnet
+    depends_on:
+      - logana01
+    volumes:
+      - ../notebook:/home/jovyan/notebook
+    command: start.sh jupyter lab --NotebookApp.password='sha1:b73d8458a734:ba7f8da4f921078098f809e5a4b9e1bf5a55318a'
+    # python -c "from IPython.lib import passwd;print(passwd())"
+
