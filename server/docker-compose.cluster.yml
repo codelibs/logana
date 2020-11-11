@@ -1,7 +1,7 @@
 version: "3.2"
 services:
   logana02:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
     container_name: logana02
     environment:
       - node.name=logana02

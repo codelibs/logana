@@ -48,6 +48,7 @@ start_server() {
         echo "$server_file exists."
         exit 1
     fi
+    mkdir -p $base_dir/server/elasticsearch/plugins
     docker-compose -f $base_dir/server/docker-compose.yml $with_cluster $with_kibana $with_jupyter up -d
     echo "$with_cluster $with_kibana $with_jupyter" > $server_file
 
