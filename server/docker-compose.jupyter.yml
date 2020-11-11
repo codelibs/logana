@@ -1,6 +1,6 @@
 version: "3.2"
 services:
-  kibana:
+  jupyter:
     image: jupyter/datascience-notebook:python-3.8.6
     container_name: logana_jupyter
     environment:
