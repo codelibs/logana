@@ -38,6 +38,7 @@ class TfRecordConfig:
     relevance_level: int = 5
     min_total: int = 0
     min_action: int = -1
+    to_ndjson:bool=False
 
 
 def create_elwc(features: Dict[str, tf.train.Feature]) -> Any:

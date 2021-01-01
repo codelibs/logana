@@ -1,4 +1,6 @@
+import gzip
 import hashlib
+import json
 import logging
 import random
 from abc import ABC, abstractmethod
@@ -81,9 +83,14 @@ class Reader(ABC):
                 config.example_fields, condition)
             if example_key not in examples:
                 example: Dict[str, Any] = {}
+                original: Dict[str, Any] = {}
                 for field in config.example_fields:
-                    example[field.name] = field.analyzer(
-                        deep_get(condition, field.proerty_name))
+                    value: Any = deep_get(condition, field.proerty_name)
+                    example[field.name] = field.analyzer(value)
+                    if config.to_ndjson:
+                        original[field.name] = value
+                if config.to_ndjson:
+                    example['_original'] = original
                 examples[example_key] = (example, {})
             _, contexts = examples.get(example_key)
             for result in deep_get(impression, 'response.results', {}).values():
@@ -96,12 +103,26 @@ class Reader(ABC):
                 if total <= config.min_total or action <= config.min_action:
                     continue
                 context: Dict[str, Any] = {}
+                original: Dict[str, Any] = {}
                 for field in config.context_fields:
-                    context[field.name] = field.analyzer(
-                        deep_get(result, field.proerty_name))
-                context['relevance'] = relevance_stats[example_key][context_key]['relevance']
+                    value: Any = deep_get(result, field.proerty_name)
+                    context[field.name] = field.analyzer(value)
+                    if config.to_ndjson:
+                        original[field.name] = value
+                relevance: int = relevance_stats[example_key][context_key]['relevance']
+                context['relevance'] = relevance
+                if config.to_ndjson:
+                    original['relevance'] = relevance
+                    context['_original'] = original
                 contexts[context_key] = context
         return examples
+
+    @staticmethod
+    def _write_examples_as_json(writer, example: Dict[str, Any], contexts: List[Dict[str, Any]]) -> None:
+        data: Dict[str, Any] = example.copy()
+        data['contexts'] = contexts
+        writer.write(json.dumps(data, ensure_ascii=False))
+        writer.write('\n')
 
     def to_tfrecords(self, config: TfRecordConfig) -> None:
         train_relevance_count: np.ndarray = np.zeros(
@@ -128,7 +149,9 @@ class Reader(ABC):
                         vocabs[field.name].add(token)
             add_example(elwc, context['relevance'], context_fields)
 
-        with tf.io.TFRecordWriter(config.train_path) as train_writer, tf.io.TFRecordWriter(config.eval_path) as test_writer:
+        with tf.io.TFRecordWriter(config.train_path) as train_writer, tf.io.TFRecordWriter(config.eval_path) as test_writer,\
+                gzip.open(f'{config.train_path}.ndjson.gz', mode='wt', encoding='utf-8') as train_json_writer, \
+                gzip.open(f'{config.eval_path}.ndjson.gz', mode='wt', encoding='utf-8') as eval_json_writer:
             for (example, contexts) in self._get_example_list(config).values():
                 if len(contexts) == 0:
                     continue
@@ -152,12 +175,18 @@ class Reader(ABC):
                 for context in train_contexts:
                     _add_example_to_context(train_elwc, context)
                     train_relevance_count[context['relevance']] += 1
+                if config.to_ndjson:
+                    self._write_examples_as_json(
+                        train_json_writer, example.get('_original'), [x.get('_original') for x in train_contexts])
 
                 eval_contexts: List[Dict[str, Any]] = contexts[0:int(
                     len(contexts)*config.split_ratio)]
                 for context in eval_contexts:
                     _add_example_to_context(test_elwc, context)
                     eval_relevance_count[context['relevance']] += 1
+                if config.to_ndjson and len(eval_contexts) > 0:
+                    self._write_examples_as_json(
+                        eval_json_writer, example.get('_original'), [x.get('_original') for x in eval_contexts])
 
                 logger.debug(
                     f'Train: {"/".join([str(x) for x in train_relevance_count])}={sum(train_relevance_count)},' +
