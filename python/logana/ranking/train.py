@@ -27,9 +27,21 @@ class TfRankingModelField:
             return tf.feature_column.embedding_column(
                 categorical_column_, self.dimension
             )
-        if self.column_type == "numeric":
+        if self.column_type == "int32":
+            return tf.feature_column.numeric_column(
+                self.name, dtype=tf.int32, default_value=self.default_value
+            )
+        if self.column_type == "numeric" or self.column_type == "int64":
             return tf.feature_column.numeric_column(
                 self.name, dtype=tf.int64, default_value=self.default_value
+            )
+        if self.column_type == "float16":
+            return tf.feature_column.numeric_column(
+                self.name, dtype=tf.float16, default_value=self.default_value
+            )
+        if self.column_type == "float32":
+            return tf.feature_column.numeric_column(
+                self.name, dtype=tf.float32, default_value=self.default_value
             )
         raise ValueError(f"Unknown column type: {self.column_type}")
 
