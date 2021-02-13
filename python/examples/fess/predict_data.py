@@ -46,6 +46,41 @@ def main(_):
         ],
     )
 
+    def convert_func(data: Dict[str, Any]) -> Dict[str, Any]:
+        results: Dict[str, Any] = {}
+        if "contexts" in data:
+            for i, doc in enumerate(data["contexts"]):
+                relevance: int = doc.get("relevance")
+                results[f"doc_{i+1}"] = {
+                    "id": f"{i+1}",
+                    "keyword": {
+                        "title": doc.get("title"),
+                    },
+                    "boolean": {
+                        "clicked": relevance > 0,
+                    },
+                    "integer": {
+                        "relevance": relevance,
+                    },
+                }
+
+        return {
+            "request": {
+                "id": {
+                    "query": data.get("_id"),
+                },
+                "conditions": {
+                    "keyword": {
+                        "keyword": data.get("keyword"),
+                    },
+                },
+            },
+            "response": {
+                "results": results,
+            },
+            "@timestamp": "now",
+        }
+
     def dump_func(
         example: Dict[str, Any], context: Dict[str, Any], score: float
     ) -> Dict[str, Any]:
@@ -57,7 +92,12 @@ def main(_):
         }
 
     save_predictions(
-        config, FLAGS.model_path, FLAGS.ndjson_path, FLAGS.output_path, dump_func
+        config,
+        FLAGS.model_path,
+        FLAGS.ndjson_path,
+        FLAGS.output_path,
+        convert_func,
+        dump_func,
     )
 
 

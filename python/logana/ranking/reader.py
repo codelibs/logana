@@ -4,7 +4,7 @@ import json
 import logging
 import random
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator, List, Set, Tuple, ValuesView
+from typing import Any, Callable, Dict, Generator, List, Set, Tuple, ValuesView
 
 import numpy as np
 import tensorflow as tf
@@ -27,7 +27,7 @@ class Reader(ABC):
         key: str = ""
         for field in fields:
             if field.primary:
-                key += "\t" + deep_get(data, field.proerty_name)
+                key += "\t" + str(deep_get(data, field.proerty_name))
         key = hashlib.md5(key.encode("utf-8")).hexdigest()
         return key
 
@@ -268,9 +268,10 @@ class Reader(ABC):
 
 
 class NdjsonReader(Reader):
-    def __init__(self, log_file: str) -> None:
+    def __init__(self, log_file: str, data_converter: Callable) -> None:
         super().__init__()
         self._log_file = log_file
+        self._data_converter = data_converter
 
     @staticmethod
     def _open(filename: str, mode="rt", encoding="utf-8"):
@@ -278,42 +279,6 @@ class NdjsonReader(Reader):
         if filename.endswith(".gz"):
             return gzip.open(filename, mode=mode, encoding=encoding)
         return open(filename, mode=mode, encoding=encoding)
-
-    @staticmethod
-    def _create_impression(data: Dict[str, Any]) -> Dict[str, Any]:
-        results: Dict[str, Any] = {}
-        if "contexts" in data:
-            for i, doc in enumerate(data["contexts"]):
-                relevance: int = doc.get("relevance")
-                results[f"doc_{i+1}"] = {
-                    "id": f"{i+1}",
-                    "keyword": {
-                        "title": doc.get("title"),
-                    },
-                    "boolean": {
-                        "clicked": relevance > 0,
-                    },
-                    "integer": {
-                        "relevance": relevance,
-                    },
-                }
-
-        return {
-            "request": {
-                "id": {
-                    "query": data.get("_id"),
-                },
-                "conditions": {
-                    "keyword": {
-                        "keyword": data.get("keyword"),
-                    },
-                },
-            },
-            "response": {
-                "results": results,
-            },
-            "@timestamp": "now",
-        }
 
     def readobjects(
         self, process_size: int = 100, queue_size: int = 200
@@ -323,5 +288,5 @@ class NdjsonReader(Reader):
             for line in f.readlines():
                 log_obj: Dict[str, Any] = json.loads(line)
                 log_obj["_id"] = str(count)
-                yield self._create_impression(log_obj)
+                yield self._data_converter(log_obj)
                 count += 1

@@ -17,9 +17,10 @@ def save_predictions(
     saved_model_path: str,
     ndjson_path: str,
     output_path: str,
+    convert_func: Callable,
     dump_func: Callable,
 ) -> None:
-    reader: NdjsonReader = NdjsonReader(ndjson_path)
+    reader: NdjsonReader = NdjsonReader(ndjson_path, convert_func)
     ranker = tf.saved_model.load(saved_model_path)
     example_count: int = 0
     context_count: int = 0
