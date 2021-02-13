@@ -4,6 +4,7 @@ import gzip
 import json
 import logging
 import os
+from typing import Any, Dict
 
 import numpy as np
 import tensorflow as tf
@@ -88,10 +89,12 @@ def main(_) -> None:
     logger.info(f"Output Model Path: {saved_model_path}")
 
     with gzip.open(f"{model_path}/result.json.gz", mode="wt", encoding="utf-8") as f:
+        config_dict: Dict[str, Any] = dataclasses.asdict(config)
+        del config_dict["eval_metric"]
         f.write(
             json.dumps(
                 {
-                    "config": dataclasses.asdict(config),
+                    "config": config_dict,
                     "result": result,
                 },
                 ensure_ascii=False,

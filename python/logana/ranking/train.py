@@ -46,6 +46,16 @@ class TfRankingModelField:
         raise ValueError(f"Unknown column type: {self.column_type}")
 
 
+def get_ndcg_metric(topn: List[int] = [10, 20, 30, 40, 50]) -> Dict[str, Callable]:
+    return {
+        "metric/ndcg@%d"
+        % x: tfr.metrics.make_ranking_metric_fn(
+            tfr.metrics.RankingMetricKey.NDCG, topn=x
+        )
+        for x in topn
+    }
+
+
 @dataclasses.dataclass
 class TfRankingModelConfig:
     model_path: str
@@ -61,6 +71,9 @@ class TfRankingModelConfig:
     learning_rate: float = 0.05
     group_size: int = 1
     dropout_rate: float = 0.5
+    eval_metric: Dict[str, Callable] = dataclasses.field(
+        default_factory=get_ndcg_metric
+    )
 
 
 def _get_context_feature_columns(
@@ -163,16 +176,6 @@ def _make_score_fn(config: TfRankingModelConfig) -> Callable:
     return _score_fn
 
 
-def _eval_metric_fns() -> Dict[str, Callable]:
-    return {
-        "metric/ndcg@%d"
-        % topn: tfr.metrics.make_ranking_metric_fn(
-            tfr.metrics.RankingMetricKey.NDCG, topn=topn
-        )
-        for topn in [10, 20, 30, 40, 50]
-    }
-
-
 def run_train(config: TfRankingModelConfig) -> Tuple[Any, Any]:
     tf.compat.v1.reset_default_graph()
 
@@ -192,7 +195,7 @@ def run_train(config: TfRankingModelConfig) -> Tuple[Any, Any]:
         return train_op
 
     ranking_head: Any = tfr.head.create_ranking_head(
-        loss_fn=loss_fn, eval_metric_fns=_eval_metric_fns(), train_op_fn=_train_op_fn
+        loss_fn=loss_fn, eval_metric_fns=config.eval_metric, train_op_fn=_train_op_fn
     )
 
     model_fn: Callable = tfr.model.make_groupwise_ranking_fn(
