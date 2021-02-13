@@ -1,4 +1,5 @@
 import logging
+from typing import Any, Dict
 
 import fugashi
 import tensorflow as tf
@@ -44,7 +45,20 @@ def main(_):
             )
         ],
     )
-    save_predictions(config, FLAGS.model_path, FLAGS.ndjson_path, FLAGS.output_path)
+
+    def dump_func(
+        example: Dict[str, Any], context: Dict[str, Any], score: float
+    ) -> Dict[str, Any]:
+        return {
+            "keyword": example.get("keyword"),
+            "title": context.get("title"),
+            "score": score,
+            "relevance": context.get("relevance"),
+        }
+
+    save_predictions(
+        config, FLAGS.model_path, FLAGS.ndjson_path, FLAGS.output_path, dump_func
+    )
 
 
 if __name__ == "__main__":

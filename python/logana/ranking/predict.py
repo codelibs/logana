@@ -1,6 +1,7 @@
 import gzip
 import json
 import logging
+from typing import Callable
 
 import tensorflow as tf
 
@@ -16,6 +17,7 @@ def save_predictions(
     saved_model_path: str,
     ndjson_path: str,
     output_path: str,
+    dump_func: Callable,
 ) -> None:
     reader: NdjsonReader = NdjsonReader(ndjson_path)
     ranker = tf.saved_model.load(saved_model_path)
@@ -30,12 +32,7 @@ def save_predictions(
             for context, score in zip(contexts, predictions[0].numpy()):
                 writer.write(
                     json.dumps(
-                        {
-                            "keyword": example.get("keyword"),
-                            "title": context.get("title"),
-                            "score": score,
-                            "relevance": context.get("relevance"),
-                        },
+                        dump_func(example, context, score),
                         ensure_ascii=False,
                         cls=NumpyJsonEncoder,
                     )
