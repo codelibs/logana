@@ -104,11 +104,14 @@ class Reader(ABC):
                     context[field.name] = field.analyzer(value)
                     if config.to_ndjson:
                         original_context[field.name] = value
-                relevance: int = relevance_stats[example_key][context_key]["relevance"]
-                context["relevance"] = relevance
-                if config.to_ndjson:
-                    original_context["relevance"] = relevance
-                    context["_original"] = original_context
+                if "relevance" not in context:
+                    relevance: int = relevance_stats[example_key][context_key][
+                        "relevance"
+                    ]
+                    context["relevance"] = relevance
+                    if config.to_ndjson:
+                        original_context["relevance"] = relevance
+                        context["_original"] = original_context
                 contexts[context_key] = context
         return examples.values()
 
