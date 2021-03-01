@@ -1,11 +1,11 @@
-Logana Python Library
-=====================
+Loganary: Python Library
+========================
 
-Logana Python Library provides features for Learning To Rank.
+Loganary is Python Library that provides features for Learning To Rank.
 
 ## Install Logana Python Library
 
-    $ pip install logana-ranking
+    $ pip install loganary-ranking
 
 ### Requirements
 
@@ -13,4 +13,4 @@ Logana Python Library provides features for Learning To Rank.
 
 ## Examples
 
-* [Examples Code](https://github.com/codelibs/logana/tree/master/python/examples)
+* [Examples Code](https://github.com/codelibs/logana/tree/master/python/ranking/examples)

@@ -8,9 +8,13 @@ from typing import Any, Callable, Dict, Generator, List, Set, Tuple, ValuesView
 
 import numpy as np
 import tensorflow as tf
-
-from logana.common import deep_get
-from logana.ranking.data import TfRecordConfig, TfRecordField, add_example, create_elwc
+from loganary.common import deep_get
+from loganary.ranking.data import (
+    TfRecordConfig,
+    TfRecordField,
+    add_example,
+    create_elwc,
+)
 
 logger = logging.getLogger(__name__)
 

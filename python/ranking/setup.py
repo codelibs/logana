@@ -7,8 +7,8 @@ from typing import Any, Dict, TextIO
 
 from setuptools import find_packages, setup
 
-NAME = "codelibs-logana-ranking"
-DESCRIPTION = "Logana Ranking Library."
+NAME = "loganary-ranking"
+DESCRIPTION = "Loganary Ranking Library."
 URL = "https://github.com/codelibs/logana"
 EMAIL = "dev@codelibs.org"
 AUTHOR = "CodeLibs Project"
@@ -24,7 +24,7 @@ except FileNotFoundError:
     long_description = DESCRIPTION
 
 about: Dict[str, Any] = {}
-with open(os.path.join(here, "logana", "__version__.py")) as f_in:  # type: TextIO
+with open(os.path.join(here, "loganary", "__version__.py")) as f_in:  # type: TextIO
     exec(f_in.read(), about)
 
 

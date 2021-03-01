@@ -10,12 +10,17 @@ import fugashi
 import numpy as np
 
 
-def japanese_tokenizer(tagger: fugashi.Tagger, text: str, pos_filter=lambda x: x in ['名詞'], empty_str: str = '__EMPTY__') -> List[str]:
-    text = unicodedata.normalize('NFKC', text).lower().strip()
+def japanese_tokenizer(
+    tagger: fugashi.Tagger,
+    text: str,
+    pos_filter=lambda x: x in ["名詞"],
+    empty_str: str = "__EMPTY__",
+) -> List[str]:
+    text = unicodedata.normalize("NFKC", text).lower().strip()
     if len(text) > 0:
         tokens: List[str] = []
         for word in tagger(text):
-            pos = word.pos.split(',')[0]
+            pos = word.pos.split(",")[0]
             if pos_filter(pos):
                 tokens.append(word.surface)
         return tokens
@@ -36,7 +41,11 @@ class NumpyJsonEncoder(json.JSONEncoder):
 
 
 def deep_get(dictionary, keys, default=None):
-    return reduce(lambda d, key: d.get(key, default) if isinstance(d, dict) else default, keys.split("."), dictionary)
+    return reduce(
+        lambda d, key: d.get(key, default) if isinstance(d, dict) else default,
+        keys.split("."),
+        dictionary,
+    )
 
 
 def setup_seed(seed: int = 42) -> None:
@@ -44,6 +53,7 @@ def setup_seed(seed: int = 42) -> None:
     np.random.seed(seed)
     try:
         import tensorflow as tf
+
         tf.random.set_seed(seed)
         tf.compat.v1.set_random_seed(seed)
     except ModuleNotFoundError:
@@ -55,8 +65,10 @@ def setup_logging(verbose: bool) -> None:
     logging.getLogger().setLevel(level=logging.DEBUG if verbose else logging.INFO)
     try:
         import tensorflow as tf
+
         tf.compat.v1.logging.set_verbosity(
-            tf.compat.v1.logging.DEBUG if verbose else tf.compat.v1.logging.INFO)
+            tf.compat.v1.logging.DEBUG if verbose else tf.compat.v1.logging.INFO
+        )
         tf.get_logger().propagate = False
     except ModuleNotFoundError:
         pass  # ignore

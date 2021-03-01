@@ -4,10 +4,9 @@ import logging
 from typing import Callable
 
 import tensorflow as tf
-
-from logana import ranking
-from logana.common import NumpyJsonEncoder
-from logana.ranking.reader import NdjsonReader
+from loganary import ranking
+from loganary.common import NumpyJsonEncoder
+from loganary.ranking.reader import NdjsonReader
 
 logger = logging.getLogger(__name__)
 

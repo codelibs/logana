@@ -9,9 +9,8 @@ from typing import Any, Dict
 import numpy as np
 import tensorflow as tf
 from absl import flags
-
-from logana.common import NumpyJsonEncoder, setup_logging, setup_seed
-from logana.ranking.train import (
+from loganary.common import NumpyJsonEncoder, setup_logging, setup_seed
+from loganary.ranking.train import (
     TfRankingModelConfig,
     TfRankingModelField,
     run_train,

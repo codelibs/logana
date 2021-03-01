@@ -6,7 +6,7 @@ import logging
 import os
 from typing import Any, Dict, Generator, List, Optional
 
-from logana import ranking
+from loganary import ranking
 
 logger = logging.getLogger(__name__)
 
