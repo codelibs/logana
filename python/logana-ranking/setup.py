@@ -7,8 +7,8 @@ from typing import Any, Dict, TextIO
 
 from setuptools import find_packages, setup
 
-NAME = "logana"
-DESCRIPTION = "My short description for my project."
+NAME = "logana-ranking"
+DESCRIPTION = "Logana Ranking Library."
 URL = "https://github.com/codelibs/logana"
 EMAIL = "dev@codelibs.org"
 AUTHOR = "CodeLibs Project"

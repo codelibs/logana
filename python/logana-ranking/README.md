@@ -1,11 +1,11 @@
 Logana Python Library
 =====================
 
-Logana Python Library provides features for recommendation and LTR.
+Logana Python Library provides features for Learning To Rank.
 
 ## Install Logana Python Library
 
-    $ pip install logana
+    $ pip install logana-ranking
 
 ### Requirements
 
