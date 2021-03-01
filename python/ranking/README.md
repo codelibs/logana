@@ -1,5 +1,5 @@
-Loganary: Python Library
-========================
+Loganary Ranking
+================
 
 Loganary is Python Library that provides features for Learning To Rank.
 
