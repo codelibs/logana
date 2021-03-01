@@ -1,9 +1,9 @@
 Loganary Ranking
 ================
 
-Loganary is Python Library that provides features for Learning To Rank.
+Loganary Ranking is Python Library for Logana, which provides features for Learning To Rank.
 
-## Install Logana Python Library
+## Install Logana Ranking
 
     $ pip install loganary-ranking
 

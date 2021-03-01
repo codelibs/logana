@@ -10,8 +10,8 @@
 /server/elasticsearch/plugins/
 .logana_server
 
-/python/data/
-/python/model/
+data/
+model/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
