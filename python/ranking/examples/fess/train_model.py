@@ -9,7 +9,7 @@ from typing import Any, Dict
 import numpy as np
 import tensorflow as tf
 from absl import flags
-from loganary.common import NumpyJsonEncoder, setup_logging, setup_seed
+from loganary.ranking.common import NumpyJsonEncoder, setup_logging, setup_seed
 from loganary.ranking.train import (
     TfRankingModelConfig,
     TfRankingModelField,

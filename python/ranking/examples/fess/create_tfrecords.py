@@ -3,9 +3,9 @@ import logging
 import fugashi
 import tensorflow as tf
 from absl import flags
-from loganary.common import japanese_tokenizer, setup_logging, setup_seed
-from loganary.fess.reader import SearchLogReader
+from loganary.ranking.common import japanese_tokenizer, setup_logging, setup_seed
 from loganary.ranking.data import TfRecordConfig, TfRecordField, get_str_feature
+from loganary.ranking.fess.reader import SearchLogReader
 
 flags.DEFINE_string("searchlog_path", None, "Path of search log files.")
 flags.DEFINE_string("train_path", None, "Path of .tfrecords file for training.")

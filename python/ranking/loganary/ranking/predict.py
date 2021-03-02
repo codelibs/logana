@@ -5,7 +5,7 @@ from typing import Callable
 
 import tensorflow as tf
 from loganary import ranking
-from loganary.common import NumpyJsonEncoder
+from loganary.ranking.common import NumpyJsonEncoder
 from loganary.ranking.reader import NdjsonReader
 
 logger = logging.getLogger(__name__)

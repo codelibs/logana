@@ -24,7 +24,9 @@ except FileNotFoundError:
     long_description = DESCRIPTION
 
 about: Dict[str, Any] = {}
-with open(os.path.join(here, "loganary", "__version__.py")) as f_in:  # type: TextIO
+with open(
+    os.path.join(here, "loganary", "ranking", "__version__.py")
+) as f_in:  # type: TextIO
     exec(f_in.read(), about)
 
 

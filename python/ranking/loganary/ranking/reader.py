@@ -8,7 +8,7 @@ from typing import Any, Callable, Dict, Generator, List, Set, Tuple, ValuesView
 
 import numpy as np
 import tensorflow as tf
-from loganary.common import deep_get
+from loganary.ranking.common import deep_get
 from loganary.ranking.data import (
     TfRecordConfig,
     TfRecordField,

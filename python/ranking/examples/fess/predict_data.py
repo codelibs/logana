@@ -4,7 +4,7 @@ from typing import Any, Dict
 import fugashi
 import tensorflow as tf
 from absl import flags
-from loganary.common import japanese_tokenizer, setup_logging, setup_seed
+from loganary.ranking.common import japanese_tokenizer, setup_logging, setup_seed
 from loganary.ranking.data import TfRecordConfig, TfRecordField, get_str_feature
 from loganary.ranking.predict import save_predictions
 
