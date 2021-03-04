@@ -21,11 +21,11 @@ def get_str_feature(tokens: List[str]) -> tf.train.Feature:
 
 
 def get_float_feature(tokens: List[float]) -> tf.train.Feature:
-    return tf.train.Feature(bytes_list=tf.train.FloatList(value=tokens))
+    return tf.train.Feature(float_list=tf.train.FloatList(value=tokens))
 
 
 def get_int64_feature(tokens: List[int]) -> tf.train.Feature:
-    return tf.train.Feature(bytes_list=tf.train.Int64List(value=tokens))
+    return tf.train.Feature(int64_list=tf.train.Int64List(value=tokens))
 
 
 class Analyzer(Protocol):
