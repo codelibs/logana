@@ -176,7 +176,12 @@ def _make_score_fn(config: TfRankingModelConfig) -> Callable:
     return _score_fn
 
 
-def run_train(config: TfRankingModelConfig) -> Tuple[Any, Any]:
+def run_train(config: TfRankingModelConfig,
+              input_fn: Callable[[TfRankingModelConfig,
+                                  bool], Tuple[Any, Any]] = _input_fn,
+              make_transform_fn: Callable[[
+                  TfRankingModelConfig], Callable] = _make_transform_fn,
+              make_score_fn: Callable[[TfRankingModelConfig], Callable] = _make_score_fn) -> Tuple[Any, Any]:
     tf.compat.v1.reset_default_graph()
 
     loss: Any = tfr.losses.RankingLossKey.APPROX_NDCG_LOSS
@@ -199,17 +204,17 @@ def run_train(config: TfRankingModelConfig) -> Tuple[Any, Any]:
     )
 
     model_fn: Callable = tfr.model.make_groupwise_ranking_fn(
-        group_score_fn=_make_score_fn(config),
-        transform_fn=_make_transform_fn(config),
+        group_score_fn=make_score_fn(config),
+        transform_fn=make_transform_fn(config),
         group_size=config.group_size,
         ranking_head=ranking_head,
     )
 
     def train_input_fn() -> Tuple[Any, Any]:
-        return _input_fn(config)
+        return input_fn(config)
 
     def eval_input_fn() -> Tuple[Any, Any]:
-        return _input_fn(config, is_train=False)
+        return input_fn(config, is_train=False)
 
     run_config: tf.estimator.RunConfig = tf.estimator.RunConfig(
         save_checkpoints_steps=1000
