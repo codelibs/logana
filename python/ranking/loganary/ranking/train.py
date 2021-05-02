@@ -56,6 +56,10 @@ def get_ndcg_metric(topn: List[int] = [10, 20, 30, 40, 50]) -> Dict[str, Callabl
     }
 
 
+def get_ndcg_loss_keys() -> List[str]:
+    return [tfr.losses.RankingLossKey.APPROX_NDCG_LOSS]
+
+
 @dataclasses.dataclass
 class TfRankingModelConfig:
     model_path: str
@@ -65,6 +69,7 @@ class TfRankingModelConfig:
     context_fields: List[TfRankingModelField]
     label_field: TfRankingModelField
     num_train_steps: int = 15000
+    loss_keys: List[str] = dataclasses.field(default_factory=get_ndcg_loss_keys)
     hidden_layer_dims: List[int] = dataclasses.field(default_factory=list)
     batch_size: int = 32
     list_size: int = 120
@@ -176,20 +181,25 @@ def _make_score_fn(config: TfRankingModelConfig) -> Callable:
     return _score_fn
 
 
-def run_train(config: TfRankingModelConfig,
-              input_fn: Callable[[TfRankingModelConfig,
-                                  bool], Tuple[Any, Any]] = _input_fn,
-              make_transform_fn: Callable[[
-                  TfRankingModelConfig], Callable] = _make_transform_fn,
-              make_score_fn: Callable[[TfRankingModelConfig], Callable] = _make_score_fn) -> Tuple[Any, Any]:
+def _make_loss_fn(config: TfRankingModelConfig) -> Callable:
+    return tfr.losses.make_loss_fn(config.loss_keys)
+
+
+def _make_optimizer_fn(config: TfRankingModelConfig) -> Callable:
+    return tf.compat.v1.train.AdagradOptimizer(learning_rate=config.learning_rate)
+
+
+def run_train(
+    config: TfRankingModelConfig,
+    input_fn: Callable[[TfRankingModelConfig, bool], Tuple[Any, Any]] = _input_fn,
+    make_transform_fn: Callable[[TfRankingModelConfig], Callable] = _make_transform_fn,
+    make_score_fn: Callable[[TfRankingModelConfig], Callable] = _make_score_fn,
+    make_loss_fn: Callable[[TfRankingModelConfig], Callable] = _make_loss_fn,
+    make_optimizer_fn: Callable[[TfRankingModelConfig], Callable] = _make_optimizer_fn,
+) -> Tuple[Any, Any]:
     tf.compat.v1.reset_default_graph()
 
-    loss: Any = tfr.losses.RankingLossKey.APPROX_NDCG_LOSS
-    loss_fn: Any = tfr.losses.make_loss_fn(loss)
-
-    optimizer: Any = tf.compat.v1.train.AdagradOptimizer(
-        learning_rate=config.learning_rate
-    )
+    optimizer: Any = make_optimizer_fn(config)
 
     def _train_op_fn(loss):
         update_ops: Any = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
@@ -200,7 +210,9 @@ def run_train(config: TfRankingModelConfig,
         return train_op
 
     ranking_head: Any = tfr.head.create_ranking_head(
-        loss_fn=loss_fn, eval_metric_fns=config.eval_metric, train_op_fn=_train_op_fn
+        loss_fn=make_loss_fn(config),
+        eval_metric_fns=config.eval_metric,
+        train_op_fn=_train_op_fn,
     )
 
     model_fn: Callable = tfr.model.make_groupwise_ranking_fn(
@@ -211,10 +223,10 @@ def run_train(config: TfRankingModelConfig,
     )
 
     def train_input_fn() -> Tuple[Any, Any]:
-        return input_fn(config)
+        return input_fn(config, True)
 
     def eval_input_fn() -> Tuple[Any, Any]:
-        return input_fn(config, is_train=False)
+        return input_fn(config, False)
 
     run_config: tf.estimator.RunConfig = tf.estimator.RunConfig(
         save_checkpoints_steps=1000
