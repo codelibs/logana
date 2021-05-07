@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 import tensorflow as tf
 import tensorflow_ranking as tfr
 from tensorflow.python.feature_column.feature_column_v2 import FeatureColumn
+from tensorflow.python.ops.init_ops import Initializer
 
 logger = logging.getLogger(__name__)
 
@@ -13,12 +14,12 @@ logger = logging.getLogger(__name__)
 class TfRankingModelField:
     name: str
     column_type: str = "embedding"
-    dictionary: Optional[str] = None
-    dimension: Optional[int] = None
     default_value: Optional[int] = None
+    dictionary: Optional[str] = None  # deprecated
+    dimension: Optional[int] = None  # deprecated
 
     def get_column(self) -> FeatureColumn:
-        if self.column_type == "embedding":
+        if self.column_type == "embedding":  # deprecated
             categorical_column_ = (
                 tf.feature_column.categorical_column_with_vocabulary_file(
                     key=self.name, vocabulary_file=self.dictionary
@@ -44,6 +45,41 @@ class TfRankingModelField:
                 self.name, dtype=tf.float32, default_value=self.default_value
             )
         raise ValueError(f"Unknown column type: {self.column_type}")
+
+
+@dataclasses.dataclass
+class TfRankingModelEmbeddingField(TfRankingModelField):
+    vocabulary_file: Optional[str] = None
+    vocabulary_size: Optional[int] = None
+    num_oov_buckets: int = 0
+    dimension: Optional[int] = None
+    combiner: str = "mean"
+    initializer: Optional[Initializer] = None
+    ckpt_to_load_from = None
+    tensor_name_in_ckpt = None
+    max_norm = None
+    trainable: bool = True
+    use_safe_embedding_lookup: bool = True
+
+    def get_column(self) -> FeatureColumn:
+        categorical_column_ = tf.feature_column.categorical_column_with_vocabulary_file(
+            key=self.name,
+            vocabulary_file=self.vocabulary_file,
+            vocabulary_size=self.vocabulary_size,
+            default_value=self.default_value,
+            num_oov_buckets=self.num_oov_buckets,
+        )
+        return tf.feature_column.embedding_column(
+            categorical_column_,
+            self.dimension,
+            combiner=self.combiner,
+            initializer=self.initializer,
+            ckpt_to_load_from=self.ckpt_to_load_from,
+            tensor_name_in_ckpt=self.tensor_name_in_ckpt,
+            max_norm=self.max_norm,
+            trainable=self.trainable,
+            use_safe_embedding_lookup=self.use_safe_embedding_lookup,
+        )
 
 
 def get_ndcg_metric(topn: List[int] = [10, 20, 30, 40, 50]) -> Dict[str, Callable]:
