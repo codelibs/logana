@@ -9,6 +9,8 @@ from typing import List
 import fugashi
 import numpy as np
 
+logger = logging.getLogger(__name__)
+
 
 def japanese_tokenizer(
     tagger: fugashi.Tagger,
@@ -36,8 +38,14 @@ class NumpyJsonEncoder(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
+        elif callable(obj):
+            return str(obj)
         else:
-            return super(NumpyJsonEncoder, self).default(obj)
+            try:
+                return super(NumpyJsonEncoder, self).default(obj)
+            except Exception as e:
+                logger.warn(f"{obj} is not serializable: {str(e)}")
+                return str(obj)
 
 
 def deep_get(dictionary, keys, default=None):
