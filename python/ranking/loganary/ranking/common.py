@@ -4,10 +4,11 @@ import os
 import random
 import unicodedata
 from functools import reduce
-from typing import List
+from typing import Callable, Dict, List
 
 import fugashi
 import numpy as np
+import tensorflow_ranking as tfr
 
 logger = logging.getLogger(__name__)
 
@@ -80,3 +81,13 @@ def setup_logging(verbose: bool) -> None:
         tf.get_logger().propagate = False
     except ModuleNotFoundError:
         pass  # ignore
+
+
+def get_ndcg_metric(topn: List[int] = [10, 20, 30, 40, 50]) -> Dict[str, Callable]:
+    return {
+        "metric/ndcg@%d"
+        % x: tfr.metrics.make_ranking_metric_fn(
+            tfr.metrics.RankingMetricKey.NDCG, topn=x
+        )
+        for x in topn
+    }

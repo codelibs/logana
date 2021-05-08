@@ -12,7 +12,7 @@ DESCRIPTION = "Loganary Ranking Library."
 URL = "https://github.com/codelibs/logana"
 EMAIL = "dev@codelibs.org"
 AUTHOR = "CodeLibs Project"
-REQUIRES_PYTHON = ">=3.6.0"
+REQUIRES_PYTHON = ">=3.6.8"
 REQUIRED = ["numpy", "tensorflow", "tensorflow-serving-api", "tensorflow-ranking"]
 
 here = os.path.abspath(os.path.dirname(__file__))
