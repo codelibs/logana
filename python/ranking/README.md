@@ -9,7 +9,7 @@ Loganary Ranking is Python Library for Logana, which provides features for Learn
 
 ### Requirements
 
-* Python 3.6 or the above
+* Python 3.8 or the above
 
 ## Examples
 
